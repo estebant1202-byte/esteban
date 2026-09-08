@@ -7,13 +7,21 @@ class Transaccion:
             raise ValueError("El titular no puede estar vacío")
         if valor <= 0:
             raise ValueError("El valor debe ser mayor que cero")
-        if not (0 <= hora <= 23):
+        if not (0 < hora <= 23):
             raise ValueError("La hora debe estar entre 0 y 23")
         if not pais:
             raise ValueError("El país no puede estar vacío")
         if not isinstance(dispositivo_conocido, bool):
             raise ValueError("dispositivo_conocido debe ser booleano")
-
+        if not isinstance(id, int):
+            raise ValueError("El ID debe ser un número entero")
+        if not isinstance(hora, int):
+            raise ValueError("La hora debe ser un número entero")
+        if not isinstance(dispositivo_conocido, bool):
+            raise ValueError("dispositivo_conocido debe ser booleano")
+        if not isinstance(valor, (int, float)):
+            raise ValueError("El valor debe ser numérico")
+    
         self.id = id
         self.titular = titular
         self.valor = valor
@@ -98,11 +106,14 @@ def registrar_transaccion(transacciones):
                 id_t = 1
             titular = input("Titular: ")
             if titular.strip() == "" or  titular.isdigit():
-                print(f"Error titular mas ingresado")
+                print(f"Error titular mal ingresado")
                 continue
             valor = float(input("Valor: "))
+            if  valor <= 0:
+                print(f"Error valor mal ingresada")
+                continue
             hora = int(input("Hora (0-23): "))
-            if  0 > hora < 23:
+            if  hora <= 0 or hora > 23:
                 print(f"Error hora mal ingresada")
                 continue
             pais = input("País: ")
@@ -145,6 +156,7 @@ def main():
         print("2. Ver transacciones")
         print("3. salir")
         print("="*36)
+
 
         opcion = input("Elige una opción: ")
 
