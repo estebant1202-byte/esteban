@@ -87,20 +87,75 @@ def guardar_transacciones(transacciones):
     with open("transacciones.json", "w",encoding="utf-8") as archivo:
         json.dump(datos, archivo, indent=4,ensure_ascii=False)
 
+def registrar_transaccion(transacciones):
+    while True:
+        print("="*6, "registrar transaccion", "="*7)
 
+        try:
+            if len(transacciones) != 0:
+                id_t = len(transacciones)+ 1
+            else:
+                id_t = 1
+            titular = input("Titular: ")
+            if titular.strip() == "" or  titular.isdigit():
+                print(f"Error titular mas ingresado")
+                continue
+            valor = float(input("Valor: "))
+            hora = int(input("Hora (0-23): "))
+            if  0 > hora < 23:
+                print(f"Error hora mal ingresada")
+                continue
+            pais = input("País: ")
+            if pais.strip() == "" or  pais.isdigit():
+                print(f"Error pais ml ingresado")
+                continue
+            dispositivo = input("¿Dispositivo conocido? (s/n): ").lower() 
+            if dispositivo == "s":
+                dispositivo = True
+            elif dispositivo == "n":
+                dispositivo = False
+            else:
+                print("Error ingrese s o n porfavor")
+                continue
+
+            t = Transaccion(id_t, titular, valor, hora, pais, dispositivo)
+            t.calcular_riesgo()
+            t.clasificar()
+            transacciones.append(t)
+            print(f"Transacción registrada. Puntaje: {t.puntaje_riesgo} | Clasificación: {t.clasificacion}")
+            guardar_transacciones(transacciones)
+            break
+        except ValueError:
+            print(f"Error: porfavor ingrese un numero")
+    print("="*36)
+
+def ver_transacciones(transacciones):
+    print("="*10,"Transacciones","="*11)
+    for t in transacciones:
+        print(f"ID: {t.id:<5} | Titular: {t.titular:<10} | Puntaje: {t.puntaje_riesgo:<5} | Clasificación: {t.clasificacion:<5}")
+    print("="*36)
 def main():
+    print("cargando datos...")
     transacciones = cargar_transacciones()
+    print("exito\n")
+    while True:
+        
+        print("="*15,"menu","="*15)
+        print("1. Registrar transacción")
+        print("2. Ver transacciones")
+        print("3. salir")
+        print("="*36)
 
-    t1 = Transaccion(1, "Laura Gómez", 3500000, 2, "Colombia", False)
-    t2 = Transaccion(2, "Carlos Pérez", 500000, 14, "Colombia", True)
-    t3 = Transaccion(3, "Ana Torres", 2500000, 10, "Perú", True)
+        opcion = input("Elige una opción: ")
 
-    for t in [t1, t2, t3]:
-        t.calcular_riesgo()
-        t.clasificar()
-        transacciones.append(t)
-        print(f"ID: {t.id} | Titular: {t.titular} | Puntaje: {t.puntaje_riesgo} | Clasificación: {t.clasificacion}")
-
-    guardar_transacciones(transacciones)
-    
+        match opcion:
+            case "1":
+                registrar_transaccion(transacciones)
+            case "2":
+                ver_transacciones(transacciones)
+            case "3":
+                print("saliendo...")
+                break
+            case _:
+                print("Opción inválida.") 
 main()
